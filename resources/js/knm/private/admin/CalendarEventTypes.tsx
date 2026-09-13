@@ -195,7 +195,8 @@ export default function CalendarEventTypes({ types }: Props) {
                                                     size="sm"
                                                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     onClick={() => openDeleteModal(type)}
-                                                    title="Delete type"
+                                                    disabled={type.events_count > 0}
+                                                    title={type.events_count > 0 ? "Cannot delete: type is in use" : "Delete type"}
                                                 >
                                                     Delete
                                                 </Button>

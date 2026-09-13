@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Contact;
+use App\Models\CalendarEvent;
 
 class MatterController extends Controller
 {
@@ -127,6 +128,30 @@ class MatterController extends Controller
             'statusHistory.changedBy',
         ]);
 
+        // Fetch upcoming events for this matter (last 30 days to +1 year)
+        $upcomingEvents = CalendarEvent::where('matter_id', $matter->id)
+            ->whereBetween('starts_at', [
+                now()->subDays(30)->startOfDay(),
+                now()->addYear()->endOfDay(),
+            ])
+            ->with(['type', 'attendees'])
+            ->orderBy('starts_at')
+            ->get()
+            ->map(function (CalendarEvent $event) {
+                return [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'starts_at' => $event->starts_at->toIso8601String(),
+                    'ends_at' => $event->ends_at?->toIso8601String(),
+                    'is_all_day' => $event->is_all_day,
+                    'location' => $event->location,
+                    'color' => $event->type?->color ?? '#891920',
+                    'is_deadline' => $event->isDeadline(),
+                    'attendees' => $event->attendees->map(fn ($u) => ['id' => $u->id, 'name' => $u->name])->values()->all(),
+                    'notify_client' => $event->notify_client,
+                ];
+            });
+
         return Inertia::render('private/matters/Show', [
             'matter' => $matter,
             'practiceAreas' => PracticeArea::where('is_active', true)->get(['id', 'name']),
@@ -134,6 +159,7 @@ class MatterController extends Controller
             'matterRoles' => MatterRole::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
             // Pass all contacts so the "Link Contact" dropdown has options
             'allContacts' => Contact::orderBy('name')->get(['id', 'name', 'type', 'company_name', 'email']),
+            'upcomingEvents' => $upcomingEvents,
         ]);
     }
 

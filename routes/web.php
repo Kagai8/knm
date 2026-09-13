@@ -292,6 +292,13 @@ Route::middleware(['auth', 'staff'])->prefix('private')->group(function () {
     Route::post('/matters/{matter}/archive', [MatterController::class, 'archive'])->name('private.matters.archive');
     Route::post('/matters/{matter}/unarchive', [MatterController::class, 'unarchive'])->name('private.matters.unarchive');
 
+
+    /* ── Calendar ───────────────────────────────────────────────── */
+    Route::get('/calendar', [\App\Http\Controllers\Private\CalendarController::class, 'index'])->name('private.calendar.index');
+    Route::post('/calendar', [\App\Http\Controllers\Private\CalendarController::class, 'store'])->name('private.calendar.store');
+    Route::put('/calendar/{calendarEvent}', [\App\Http\Controllers\Private\CalendarController::class, 'update'])->name('private.calendar.update');
+    Route::delete('/calendar/{calendarEvent}', [\App\Http\Controllers\Private\CalendarController::class, 'destroy'])->name('private.calendar.destroy');
+
     /* ── Stage Transitions ──────────────────────────────────────── */
     Route::post('/matters/{matter}/advance', [MatterStageController::class, 'advance'])->name('private.matters.advance');
     Route::post('/matters/{matter}/move-to', [MatterStageController::class, 'moveTo'])->name('private.matters');

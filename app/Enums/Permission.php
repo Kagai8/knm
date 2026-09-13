@@ -38,6 +38,7 @@ enum Permission: string
     case CalendarViewAll = 'calendar.view_all';
     case CalendarManageOwn = 'calendar.manage_own';
     case CalendarManageAll = 'calendar.manage_all';
+    case CalendarDelegate = 'calendar.delegate';
     case CalendarEventTypesManage = 'calendar.event_types.manage';
 
     /* ----------------- Tasks ----------------- */
@@ -122,6 +123,7 @@ enum Permission: string
             self::CalendarManageOwn => 'Manage own events',
             self::CalendarManageAll => 'Manage firm calendar',
             self::CalendarEventTypesManage => 'Manage calendar event types',
+            self::CalendarDelegate => 'Book events for other staff',
 
             self::TasksView => 'View tasks',
             self::TasksAssign => 'Assign tasks',

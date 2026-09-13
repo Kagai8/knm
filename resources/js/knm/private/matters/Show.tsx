@@ -1,8 +1,12 @@
+/* eslint-disable import/order */
+/* eslint-disable curly */
+/* eslint-disable @stylistic/padding-line-between-statements */
 import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Badge, Button, Card, CardBody, CardHeader, ConfirmModal, FormField, Modal, toast } from '@/knm/shared/ui';
 import { useAuth } from '@/knm/shared/hooks/useAuth';
+import UpcomingEventsWidget from './UpcomingEventsWidget';
 
 interface NamedId {
     id: number;
@@ -74,6 +78,18 @@ interface Props {
     advocates: NamedId[];
     matterRoles: MatterRole[];
     allContacts: Contact[];
+    upcomingEvents: Array<{
+        id: number;
+        title: string;
+        starts_at: string;
+        ends_at: string | null;
+        is_all_day: boolean;
+        location: string | null;
+        color: string;
+        is_deadline: boolean;
+        attendees: Array<{ id: number; name: string }>;
+        notify_client: boolean;
+    }>;
 }
 
 type BadgeColor = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'gold';
@@ -97,7 +113,7 @@ const stageOrder = ['instruction', 'engagement', 'active_work', 'closure', 'arch
 const formatDate = (iso: string | null) =>
     iso ? new Date(iso).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
 
-export default function Show({ matter, practiceAreas, advocates, matterRoles, allContacts }: Props) {
+export default function Show({ matter, practiceAreas, advocates, matterRoles, allContacts, upcomingEvents }: Props) {
     const { can } = useAuth();
     const advanceForm = useForm({ notes: '' });
     const moveForm = useForm({ stage: '', notes: '' });
@@ -358,6 +374,13 @@ export default function Show({ matter, practiceAreas, advocates, matterRoles, al
                                 </div>
                             </CardBody>
                         </Card>
+
+                        {/* Upcoming Events & Deadlines */}
+                        <UpcomingEventsWidget
+                            events={upcomingEvents}
+                            matterId={matter.id}
+                            matterTitle={matter.title}
+                        />
 
                         {/* Team */}
                         <Card>

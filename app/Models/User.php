@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -110,5 +111,14 @@ class User extends Authenticatable
     public function matterRole(): BelongsTo
     {
         return $this->belongsTo(MatterRole::class, 'matter_role_id');
+    }
+
+        /**
+     * Calendar events this user is booked for.
+     */
+    public function calendarEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(CalendarEvent::class, 'calendar_event_attendees', 'user_id', 'calendar_event_id')
+            ->withTimestamps();
     }
 }

@@ -92,7 +92,7 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
                 { name: 'Matters', href: '/private/matters', icon: icons.matters, permission: 'matters.view' },
                 { name: 'Clients', href: '/private/clients', icon: icons.clients, permission: 'clients.view' },
                 { name: 'Contacts', href: '/private/contacts', icon: icons.contacts, permission: 'contacts.view' },
-                { name: 'Calendar', href: '/private/calendar', icon: icons.calendar, permission: 'calendar.view_own', soon: true },
+                { name: 'Calendar', href: '/private/calendar', icon: icons.calendar, permission: 'calendar.view_own' },
             ],
         },
         {
