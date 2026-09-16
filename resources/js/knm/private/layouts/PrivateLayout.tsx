@@ -100,7 +100,7 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
             items: [
                 { name: 'Documents', href: '/private/documents', icon: icons.documents, permission: 'documents.view', soon: true },
                 { name: 'Precedents', href: '/private/precedents', icon: icons.precedents, permission: 'precedents.view', soon: true },
-                { name: 'Tasks', href: '/private/tasks', icon: icons.tasks, permission: 'tasks.view', soon: true },
+                { name: 'Tasks', href: '/private/tasks', icon: icons.tasks, permission: 'tasks.view' },
             ],
         },
         {
@@ -124,6 +124,7 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
                 { name: 'Company Settings', href: '/private/admin/settings', icon: icons.cog, permission: 'settings.manage' },
                 { name: 'Matter Roles', href: '/private/admin/matter-roles', icon: icons.users, permission: 'matter_roles.manage' },
                 { name: 'Event Types', href: '/private/admin/calendar-event-types', icon: icons.calendar, permission: 'calendar.event_types.manage' },
+                { name: 'Deadline Rules', href: '/private/deadline-rules', icon: icons.time, permission: 'deadline.rules.manage' },
             ],
         },
     ];

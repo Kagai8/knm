@@ -39,10 +39,12 @@ enum Permission: string
     case CalendarManageOwn = 'calendar.manage_own';
     case CalendarManageAll = 'calendar.manage_all';
     case CalendarDelegate = 'calendar.delegate';
+    case DeadlineRulesManage = 'deadline.rules.manage';
     case CalendarEventTypesManage = 'calendar.event_types.manage';
 
     /* ----------------- Tasks ----------------- */
     case TasksView = 'tasks.view';
+    case TasksManageOwn = 'tasks.manage_own';
     case TasksAssign = 'tasks.assign';
     case TasksManageAll = 'tasks.manage_all';
 
@@ -124,9 +126,11 @@ enum Permission: string
             self::CalendarManageAll => 'Manage firm calendar',
             self::CalendarEventTypesManage => 'Manage calendar event types',
             self::CalendarDelegate => 'Book events for other staff',
+            self::DeadlineRulesManage => 'Manage deadline rules',
 
             self::TasksView => 'View tasks',
-            self::TasksAssign => 'Assign tasks',
+            self::TasksManageOwn => 'Manage own tasks (assigned to me or created by me)',
+            self::TasksAssign => 'Assign tasks to others',
             self::TasksManageAll => 'Manage all tasks',
 
             self::BillingTimeEnter => 'Enter own time',

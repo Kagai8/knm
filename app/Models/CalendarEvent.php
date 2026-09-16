@@ -23,6 +23,7 @@ class CalendarEvent extends Model
         'client_id',
         'created_by_id',
         'notify_client',
+        'source_event_id',
     ];
 
     protected function casts(): array
@@ -76,6 +77,14 @@ class CalendarEvent extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    /**
+     * The event that auto-generated this one via a deadline rule (null = manually created).
+     */
+    public function sourceEvent(): BelongsTo
+    {
+        return $this->belongsTo(CalendarEvent::class, 'source_event_id');
     }
 
     public function isDeadline(): bool

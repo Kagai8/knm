@@ -302,6 +302,13 @@ Route::middleware(['auth', 'staff'])->prefix('private')->group(function () {
     /* ── Stage Transitions ──────────────────────────────────────── */
     Route::post('/matters/{matter}/advance', [MatterStageController::class, 'advance'])->name('private.matters.advance');
     Route::post('/matters/{matter}/move-to', [MatterStageController::class, 'moveTo'])->name('private.matters');
+
+    /* ── Deadline Rules ─────────────────────────────────────────── */
+    Route::resource('deadline-rules', \App\Http\Controllers\Private\DeadlineRuleController::class)->except(['show', 'edit', 'create']);
+
+    /* ── Tasks ─────────────────────────────────────────────────── */
+    Route::get('tasks/mine', [\App\Http\Controllers\Private\TaskController::class, 'myTasks'])->name('tasks.mine');
+    Route::resource('tasks', \App\Http\Controllers\Private\TaskController::class)->except(['show', 'edit', 'create']);
 });
 
 /*

@@ -17,6 +17,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Contact;
 use App\Models\CalendarEvent;
+use App\Models\Task;
 
 class MatterController extends Controller
 {
@@ -152,6 +153,39 @@ class MatterController extends Controller
                 ];
             });
 
+        // Tasks linked to this matter: open first (overdue on top), then completed
+        $matterTasks = Task::where('matter_id', $matter->id)
+            ->with(['assignee', 'createdBy', 'completedBy'])
+            ->get()
+            ->sortBy(fn (Task $task) => [
+                $task->isOpen() ? 0 : 1,
+                $task->isOverdue() ? 0 : 1,
+                $task->due_date?->toDateString() ?? '9999-12-31',
+            ])
+            ->map(fn (Task $task) => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'description' => $task->description,
+                'status' => [
+                    'value' => $task->status->value,
+                    'label' => $task->status->label(),
+                    'color' => $task->status->color(),
+                ],
+                'priority' => [
+                    'value' => $task->priority->value,
+                    'label' => $task->priority->label(),
+                    'color' => $task->priority->color(),
+                ],
+                'due_date' => $task->due_date?->toDateString(),
+                'is_overdue' => $task->isOverdue(),
+                'is_due_today' => $task->isDueToday(),
+                'assignee' => $task->assignee ? ['id' => $task->assignee->id, 'name' => $task->assignee->name] : null,
+                'created_by' => $task->createdBy ? ['id' => $task->createdBy->id, 'name' => $task->createdBy->name] : null,
+                'completed_at' => $task->completed_at?->toIso8601String(),
+                'completed_by' => $task->completedBy ? ['id' => $task->completedBy->id, 'name' => $task->completedBy->name] : null,
+            ])
+            ->values();
+
         return Inertia::render('private/matters/Show', [
             'matter' => $matter,
             'practiceAreas' => PracticeArea::where('is_active', true)->get(['id', 'name']),
@@ -160,6 +194,8 @@ class MatterController extends Controller
             // Pass all contacts so the "Link Contact" dropdown has options
             'allContacts' => Contact::orderBy('name')->get(['id', 'name', 'type', 'company_name', 'email']),
             'upcomingEvents' => $upcomingEvents,
+            'matterTasks' => $matterTasks,
+            'staff' => User::orderBy('name')->get(['id', 'name']),
         ]);
     }
 

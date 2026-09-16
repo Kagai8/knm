@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Badge, Button, Card, CardBody, CardHeader, ConfirmModal, FormField, Modal, toast } from '@/knm/shared/ui';
 import { useAuth } from '@/knm/shared/hooks/useAuth';
 import UpcomingEventsWidget from './UpcomingEventsWidget';
+import MatterTasksWidget, { type MatterTask } from './MatterTasksWidget';
 
 interface NamedId {
     id: number;
@@ -78,6 +79,8 @@ interface Props {
     advocates: NamedId[];
     matterRoles: MatterRole[];
     allContacts: Contact[];
+    matterTasks: MatterTask[];
+    staff: NamedId[];
     upcomingEvents: Array<{
         id: number;
         title: string;
@@ -113,7 +116,7 @@ const stageOrder = ['instruction', 'engagement', 'active_work', 'closure', 'arch
 const formatDate = (iso: string | null) =>
     iso ? new Date(iso).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
 
-export default function Show({ matter, practiceAreas, advocates, matterRoles, allContacts, upcomingEvents }: Props) {
+export default function Show({ matter, practiceAreas, advocates, matterRoles, allContacts, upcomingEvents, matterTasks, staff }: Props) {
     const { can } = useAuth();
     const advanceForm = useForm({ notes: '' });
     const moveForm = useForm({ stage: '', notes: '' });
@@ -381,6 +384,9 @@ export default function Show({ matter, practiceAreas, advocates, matterRoles, al
                             matterId={matter.id}
                             matterTitle={matter.title}
                         />
+
+                        {/* Matter Tasks */}
+                        <MatterTasksWidget tasks={matterTasks} matterId={matter.id} staff={staff} />
 
                         {/* Team */}
                         <Card>
