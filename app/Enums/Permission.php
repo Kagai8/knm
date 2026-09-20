@@ -48,6 +48,16 @@ enum Permission: string
     case TasksAssign = 'tasks.assign';
     case TasksManageAll = 'tasks.manage_all';
 
+    /* --------------- Messages ---------------- */
+    case MessagesViewOwn = 'messages.view_own';
+    case MessagesSend = 'messages.send';
+    case MessagesSendToClients = 'messages.send_to_clients';
+    case MessagesViewAll = 'messages.view_all';
+    case MessagesModerate = 'messages.moderate';
+    case MessagesDisableUser = 'messages.disable_user';
+    case MessagesExport = 'messages.export';
+    case MessagesManage = 'messages.manage';
+
     /* ---------------- Billing ---------------- */
     case BillingTimeEnter = 'billing.time.enter';
     case BillingTimeApprove = 'billing.time.approve';
@@ -85,6 +95,7 @@ enum Permission: string
             str_starts_with($this->value, 'precedents.') => 'Documents & Precedents',
             str_starts_with($this->value, 'calendar.') => 'Calendar',
             str_starts_with($this->value, 'tasks.') => 'Tasks',
+            str_starts_with($this->value, 'messages.') => 'Messages',
             str_starts_with($this->value, 'billing.') => 'Billing',
             str_starts_with($this->value, 'reports.') => 'Reports',
             str_starts_with($this->value, 'enquiries.') => 'Intake',
@@ -132,6 +143,15 @@ enum Permission: string
             self::TasksManageOwn => 'Manage own tasks (assigned to me or created by me)',
             self::TasksAssign => 'Assign tasks to others',
             self::TasksManageAll => 'Manage all tasks',
+
+            self::MessagesViewOwn => 'View my conversations',
+            self::MessagesSend => 'Send messages to staff',
+            self::MessagesSendToClients => 'Send messages to clients (via portal)',
+            self::MessagesViewAll => 'View all conversations (compliance)',
+            self::MessagesModerate => 'Moderate conversations (mute, manage participants)',
+            self::MessagesDisableUser => 'Block users from messaging',
+            self::MessagesExport => 'Export conversations for audit',
+            self::MessagesManage => 'Full messaging administration',
 
             self::BillingTimeEnter => 'Enter own time',
             self::BillingTimeApprove => 'Approve timesheets',

@@ -23,9 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        // Add this block:
         $middleware->alias([
             'staff' => \App\Http\Middleware\EnsureUserIsStaff::class,
+            'client' => \App\Http\Middleware\EnsureUserIsClient::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

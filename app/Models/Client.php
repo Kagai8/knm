@@ -38,6 +38,7 @@ class Client extends Model
         ];
     }
 
+
     /**
      * The staff member who created this client.
      */
@@ -114,4 +115,14 @@ class Client extends Model
             }
         });
     }
+
+        /**
+     * The user account linked to this client (for portal login).
+     * One user per client for now; extend to hasMany if multi-contact needed.
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(User::class);
+    }
+
 }

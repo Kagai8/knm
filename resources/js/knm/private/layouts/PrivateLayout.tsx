@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NewIcon from '@/assets/NEWLOGO.avif';
 import { useAuth } from '@/knm/shared/hooks/useAuth';
+import { useMessageUnread } from '@/knm/shared/hooks/useMessageUnread';
 
 const premiumEase = [0.25, 0.1, 0.25, 1];
 
@@ -14,6 +15,7 @@ type NavItem = {
     icon: string;
     permission?: string; // Required capability to see this item. Omit = always visible.
     soon?: boolean;
+    badge?: number | string; // Optional pill on the right (e.g., unread count).
 };
 
 type NavSection = {
@@ -52,6 +54,7 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
     const { user, can } = useAuth();
 
     const [mobileOpen, setMobileOpen] = useState(false);
+    const unreadCount = useMessageUnread(can('messages.view_own'));
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         Workspace: true,
         Library: true,
@@ -101,6 +104,13 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
                 { name: 'Documents', href: '/private/documents', icon: icons.documents, permission: 'documents.view', soon: true },
                 { name: 'Precedents', href: '/private/precedents', icon: icons.precedents, permission: 'precedents.view', soon: true },
                 { name: 'Tasks', href: '/private/tasks', icon: icons.tasks, permission: 'tasks.view' },
+                {
+                    name: 'Messages',
+                    href: '/private/conversations',
+                    icon: icons.bell,
+                    permission: 'messages.view_own',
+                    badge: unreadCount > 0 ? (unreadCount > 99 ? '99+' : unreadCount) : undefined,
+                },
             ],
         },
         {
@@ -169,6 +179,11 @@ export default function PrivateLayout({ children }: { children: ReactNode }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
                 </svg>
                 <span className="relative">{item.name}</span>
+                {item.badge !== undefined && (
+                    <span className="relative ml-auto min-w-[20px] h-5 px-1.5 rounded-full bg-[#891920] text-white text-[10px] font-bold flex items-center justify-center border border-[#D4AF37]/30 shadow-sm">
+                        {item.badge}
+                    </span>
+                )}
             </Link>
         );
     };

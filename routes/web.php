@@ -198,6 +198,15 @@ Route::prefix('portal')->group(function () {
     Route::get('/profile', function () {
         return inertia('public/portal/pages/Profile');
     })->name('portal.profile');
+
+    /* ── Portal API (authenticated client endpoints) ────────────────── */
+    Route::middleware(['auth', 'client'])
+        ->prefix('api')
+        ->group(function () {
+            Route::get('conversations', [\App\Http\Controllers\Portal\ConversationController::class, 'index'])->name('portal.conversations.index');
+            Route::get('conversations/{conversation}', [\App\Http\Controllers\Portal\ConversationController::class, 'show'])->name('portal.conversations.show');
+            Route::post('conversations/{conversation}/messages', [\App\Http\Controllers\Portal\ConversationController::class, 'storeMessage'])->name('portal.conversations.messages.store');
+    });
 });
 
 /*
@@ -309,6 +318,22 @@ Route::middleware(['auth', 'staff'])->prefix('private')->group(function () {
     /* ── Tasks ─────────────────────────────────────────────────── */
     Route::get('tasks/mine', [\App\Http\Controllers\Private\TaskController::class, 'myTasks'])->name('tasks.mine');
     Route::resource('tasks', \App\Http\Controllers\Private\TaskController::class)->except(['show', 'edit', 'create']);
+
+    /* ── Messages / Conversations ──────────────────────────────── */
+    Route::get('conversations/poll', [\App\Http\Controllers\Private\ConversationController::class, 'pollInbox'])->name('conversations.poll');
+    Route::get('conversations/search-messages', [\App\Http\Controllers\Private\ConversationController::class, 'searchMessages'])->name('conversations.search');
+    Route::get('conversations/unread-count', [\App\Http\Controllers\Private\ConversationController::class, 'unreadCount'])->name('conversations.unread');
+    Route::post('conversations/{conversation}/typing', [\App\Http\Controllers\Private\ConversationController::class, 'typingHeartbeat'])->name('conversations.typing');
+    Route::get('conversations/{conversation}/typing', [\App\Http\Controllers\Private\ConversationController::class, 'typingStatus'])->name('conversations.typing.status');
+    Route::get('conversations/{conversation}/poll', [\App\Http\Controllers\Private\ConversationController::class, 'pollMessages'])->name('conversations.poll.messages');
+    Route::post('conversations/{conversation}/read', [\App\Http\Controllers\Private\ConversationController::class, 'markRead'])->name('conversations.read');
+    Route::resource('conversations', \App\Http\Controllers\Private\ConversationController::class)->except(['create', 'edit']);
+    Route::post('conversations/{conversation}/participants', [\App\Http\Controllers\Private\ConversationController::class, 'addParticipant'])->name('conversations.participants.add');
+    Route::delete('conversations/{conversation}/participants/{participant}', [\App\Http\Controllers\Private\ConversationController::class, 'removeParticipant'])->name('conversations.participants.remove');
+    Route::post('conversations/{conversation}/mute', [\App\Http\Controllers\Private\ConversationController::class, 'muteParticipant'])->name('conversations.mute');
+    Route::get('conversations/{conversation}/export', [\App\Http\Controllers\Private\ConversationController::class, 'export'])->name('conversations.export');
+    Route::post('users/{user}/messaging', [\App\Http\Controllers\Private\ConversationController::class, 'setMessagingDisabled'])->name('users.messaging.toggle');
+    Route::resource('messages', \App\Http\Controllers\Private\MessageController::class)->except(['index', 'show', 'create', 'edit']);
 });
 
 /*

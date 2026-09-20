@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'role_id',
         'is_super_admin',
         'is_disabled',
+        'client_id',
     ];
 
     protected $hidden = [
@@ -90,6 +92,22 @@ class User extends Authenticatable
         return $this->isSuperAdmin() || ($this->assignedRole !== null && $this->assignedRole->name !== 'Client');
     }
 
+    /**
+     * Is this user a client (linked to a Client record)?
+     */
+    public function isClient(): bool
+    {
+        return $this->client_id !== null;
+    }
+
+    /**
+     * The Client record this user belongs to (null for staff).
+     */
+    public function client(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     /* ------------------------------------------------------------------ */
     /* Scopes                                                              */
     /* ------------------------------------------------------------------ */
@@ -123,4 +141,34 @@ class User extends Authenticatable
         return $this->belongsToMany(CalendarEvent::class, 'calendar_event_attendees', 'user_id', 'calendar_event_id')
             ->withTimestamps();
     }
+
+        /**
+     * Conversations this user is participating in.
+     */
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_participants')
+            ->withPivot(['joined_at', 'muted_until', 'last_read_at'])
+            ->withTimestamps()
+            ->orderBy('updated_at', 'desc');
+    }
+
+        /**
+     * Messages sent by this user.
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Messages this user has read (for read receipts).
+     */
+    public function messagesRead(): BelongsToMany
+    {
+        return $this->belongsToMany(Message::class, 'message_reads')
+            ->withPivot('read_at');
+    }
+
+
 }
